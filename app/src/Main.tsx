@@ -6,7 +6,7 @@ import DatePicker from './Components/DatePicker';
 import MyDonut from './Components/MyDonut';
 import Table from './Components/Table';
 import colors from './Globals/colors';
-import { formatDate } from './utils';
+import { formatDate, storeDataToStorage } from './utils';
 import { useHistory } from './utils/data';
 
 const styles = StyleSheet.create({
@@ -53,11 +53,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
   },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  dot: {
+    height: 12,
+    width: 12,
+    borderRadius: 6,
+  },
 });
 
+const initialPage = 0;
 const Main: React.FC<{
   defaultCountry?: string;
 }> = ({ defaultCountry }) => {
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [selectedCountry, setSelectedCountry] = useState<string>('Turkey');
   const [countryPickerModalVisible, setCountryPickerModalvisible] = useState<boolean>(false);
   const [datePickerModalVisible, setDatePickerModalvisible] = useState<boolean>(false);
@@ -84,6 +95,7 @@ const Main: React.FC<{
   const totalDeaths = historyData?.deaths.total;
   const totalRecovered = historyData?.cases.recovered;
 
+  const keys = ['0', '1', '2'];
   return (
     <>
       <ScrollView
@@ -98,28 +110,46 @@ const Main: React.FC<{
           />
         }
       >
-        <View style={{ height: 200, marginTop: 12 }}>
-          <ViewPager style={{ flex: 1 }} initialPage={0}>
-            <View key="1">
+        <View style={{ height: 230, marginTop: 12 }}>
+          <ViewPager
+            style={{ flex: 1 }}
+            initialPage={initialPage}
+            onPageSelected={e => setCurrentPage(e.nativeEvent.position)}
+          >
+            <View key="0">
               <View style={{ alignItems: 'center' }}>
                 <MyDonut percentage={activeCase} max={population} />
                 <Text style={styles.chartBottomTextInfo}>({activeCase})</Text>
                 <Text style={styles.chartBottomText}>Aktif Vaka-Nüfus Oranı</Text>
               </View>
             </View>
-            <View key="2">
+            <View key="1">
               <View style={{ alignItems: 'center' }}>
                 <MyDonut percentage={totalRecovered} max={totalCase} />
                 <Text style={styles.chartBottomText}>Toplam İyileşen-Vaka Oranı</Text>
               </View>
             </View>
-            <View key="3">
+            <View key="2">
               <View style={{ alignItems: 'center' }}>
                 <MyDonut percentage={totalDeaths} max={totalCase} />
                 <Text style={styles.chartBottomText}>Toplam Vefat-Vaka Oranı</Text>
               </View>
             </View>
           </ViewPager>
+          <View style={styles.pagination}>
+            {keys.map((key, idx) => (
+              <View
+                key={key}
+                style={[
+                  styles.dot,
+                  {
+                    backgroundColor: currentPage === idx ? colors.yellow : colors.darkGray,
+                    marginRight: idx === keys.length - 1 ? 0 : 6,
+                  },
+                ]}
+              />
+            ))}
+          </View>
         </View>
         <View style={styles.pickerGroup}>
           <View style={[styles.dateBtn, styles.tableOptGroup]}>
@@ -149,7 +179,10 @@ const Main: React.FC<{
         visible={countryPickerModalVisible}
         onClose={() => setCountryPickerModalvisible(false)}
         value={selectedCountry}
-        onChange={setSelectedCountry}
+        onChange={val => {
+          setSelectedCountry(val);
+          storeDataToStorage('country', val);
+        }}
       />
       <DatePicker
         visible={datePickerModalVisible}

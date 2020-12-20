@@ -42,7 +42,7 @@ const Donut: React.FC<{
   };
 
   useEffect(() => {
-    animation(percentage);
+    animation(percentage || 0);
 
     animatedValue.addListener(v => {
       const maxPerc = (100 * v.value) / max;
@@ -55,7 +55,7 @@ const Donut: React.FC<{
 
       if (inputRef?.current) {
         inputRef.current.setNativeProps({
-          text: `${maxPerc.toFixed(2)}%`,
+          text: percentage ? `${maxPerc.toFixed(2)}%` : `Veri Yok`,
         });
       }
     });

@@ -36,7 +36,7 @@ const Header: React.FC<{}> = () => {
     <View style={styles.container}>
       <View style={[styles.headerSection, styles.headerLeft]} />
       <View style={[styles.headerSection, styles.headerBody]}>
-        <Text style={styles.headerTitle}>Pandemic Reports</Text>
+        <Text style={styles.headerTitle}>Pandemic</Text>
       </View>
       <View style={[styles.headerSection, styles.headerRight]} />
     </View>
