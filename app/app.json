@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "Pandemic",
+    "slug": "pandemic",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,13 +9,21 @@
       "backgroundColor": "#222831"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 15
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
+    "notification": {
+      "icon": "./assets/icon.png",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Pandemic",
+      "color": "#ffffff",
+      "iosDisplayInForeground": true
+    },
     "android": {
+      "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

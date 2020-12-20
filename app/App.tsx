@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Updates from 'expo-updates';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { ConfigInterface, SWRConfig } from 'swr';
@@ -22,6 +23,24 @@ export default function App() {
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>();
 
+  useEffect(() => {
+    const checkForOTAUpdates = async () => {
+      try {
+        await SplashScreen.preventAutoHideAsync().catch(() => {});
+        const update = await Updates.checkForUpdateAsync();
+        // await SplashScreen.preventAutoHideAsync().catch(() => {});
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (e) {
+        //
+      } finally {
+        await SplashScreen.hideAsync().catch(() => {});
+      }
+    };
+    checkForOTAUpdates();
+  }, []);
   useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
