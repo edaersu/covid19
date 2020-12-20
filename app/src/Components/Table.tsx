@@ -30,8 +30,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Table: React.FC<{ data?: StatisticResponse }> = ({ data }) => {
-  if (!data) {
+const Table: React.FC<{
+  prevData?: StatisticResponse;
+  data?: StatisticResponse;
+  loading?: boolean;
+}> = ({ prevData, data, loading }) => {
+  if (loading) {
     return (
       <View style={[styles.tableContainer, { paddingTop: 24 }]}>
         <ActivityIndicator color={colors.textColorWhite} size="large" />
@@ -39,6 +43,20 @@ const Table: React.FC<{ data?: StatisticResponse }> = ({ data }) => {
     );
   }
 
+  const todayTest = data && prevData ? data.tests.total - prevData?.tests.total : '-';
+  const todayRecovered = data && prevData ? data.cases.recovered - prevData?.cases.recovered : '-';
+  const todayCase =
+    data && prevData
+      ? data.cases.new
+        ? data.cases.new.replace('+', '')
+        : data.cases.total - prevData?.cases.total
+      : '-';
+  const todayDeath =
+    data && prevData
+      ? data.deaths.new
+        ? data.deaths.new.replace('+', '')
+        : data.deaths.total - prevData?.deaths.total
+      : '-';
   return (
     <View style={styles.tableContainer}>
       <View style={styles.tableWrapper}>
@@ -51,18 +69,46 @@ const Table: React.FC<{ data?: StatisticResponse }> = ({ data }) => {
           </View>
           <View style={styles.tableBody}>
             <View style={{ flex: 1 }}>
-              <Cell title="Test Sayısı" content={data.tests.total || '-'} />
-              <Cell title="Vaka" content={data.NewCases?.replace('+', '') || '-'} />
-              {/* <Cell title="Hasta" content="-" /> */}
-              <Cell title="Vefat" content={data.NewDeaths?.replace('+', '') || '-'} />
-              <Cell title="İyileşen" content={data.NewRecovered?.replace('+', '') || '-'} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Cell right title="Test Sayısı" content={data.tests.total || '-'} />
-              <Cell right title="Vaka" content={data.TotalCases || '-'} />
-              {/* <Cell right title="Hasta" content="-" /> */}
-              <Cell right title="Vefat" content={data.TotalDeaths || '-'} />
-              <Cell right title="Toplam İyileşen" content={data.TotalRecovered || '-'} />
+              <Cell
+                left={{
+                  title: 'Test Sayısı',
+                  content: todayTest,
+                }}
+                right={{
+                  title: 'Test Sayısı',
+                  content: data?.tests.total || '-',
+                }}
+              />
+              <Cell
+                left={{
+                  title: 'Vaka',
+                  content: todayCase,
+                }}
+                right={{
+                  title: 'Vaka',
+                  content: data?.cases.total || '-',
+                }}
+              />
+              <Cell
+                left={{
+                  title: 'Vefat',
+                  content: todayDeath,
+                }}
+                right={{
+                  title: 'Vefat',
+                  content: data?.deaths.total || '-',
+                }}
+              />
+              <Cell
+                left={{
+                  title: 'İyileşen',
+                  content: todayRecovered,
+                }}
+                right={{
+                  title: 'İyileşen',
+                  content: data?.cases.recovered || '-',
+                }}
+              />
             </View>
           </View>
         </View>

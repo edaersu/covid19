@@ -5,7 +5,7 @@ export type StatisticResponse = {
   country: string;
   population: number;
   cases: {
-    new: numberOrNull;
+    new: stringOrNull;
     active: numberOrNull;
     critical: numberOrNull;
     recovered: numberOrNull;
@@ -13,7 +13,7 @@ export type StatisticResponse = {
     total: numberOrNull;
   };
   deaths: {
-    new: numberOrNull;
+    new: stringOrNull;
     '1M_pop': stringOrNull;
     total: numberOrNull;
   };

@@ -4,7 +4,9 @@ import Header from './Components/Header';
 import colors from './Globals/colors';
 import Main from './Main';
 
-const Root: React.FC<{}> = () => {
+const Root: React.FC<{
+  country?: string;
+}> = ({ country }) => {
   return (
     <SafeAreaView
       style={{
@@ -14,7 +16,7 @@ const Root: React.FC<{}> = () => {
     >
       <StatusBar animated barStyle="light-content" />
       <Header />
-      <Main />
+      <Main defaultCountry={country} />
     </SafeAreaView>
   );
 };

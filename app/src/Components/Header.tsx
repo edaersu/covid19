@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.textColorWhite,
   },
@@ -36,7 +36,7 @@ const Header: React.FC<{}> = () => {
     <View style={styles.container}>
       <View style={[styles.headerSection, styles.headerLeft]} />
       <View style={[styles.headerSection, styles.headerBody]}>
-        <Text style={styles.headerTitle}>Covid 19</Text>
+        <Text style={styles.headerTitle}>Pandemic Reports</Text>
       </View>
       <View style={[styles.headerSection, styles.headerRight]} />
     </View>

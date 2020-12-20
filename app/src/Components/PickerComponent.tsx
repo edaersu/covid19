@@ -8,9 +8,17 @@ export type PickerComponentProps = {
   onClose: (p1?: any) => any;
   children: JSX.Element;
   loading?: boolean;
+  hideCancel?: boolean;
 };
 
-function PickerComponent({ loading, onClose, visible, onChange, ...props }: PickerComponentProps) {
+function PickerComponent({
+  hideCancel,
+  loading,
+  onClose,
+  visible,
+  onChange,
+  ...props
+}: PickerComponentProps) {
   return (
     <Modal
       visible={visible}
@@ -38,7 +46,11 @@ function PickerComponent({ loading, onClose, visible, onChange, ...props }: Pick
             justifyContent: 'space-between',
           }}
         >
-          <Button onPress={onClose} title="Vazgeç" color={colors.textColorWhite} />
+          {hideCancel ? (
+            <View />
+          ) : (
+            <Button onPress={onClose} title="Vazgeç" color={colors.textColorWhite} />
+          )}
           <Button onPress={onChange} title="Bitti" color={colors.yellow} />
         </View>
         {loading ? (
