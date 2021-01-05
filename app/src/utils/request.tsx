@@ -6,8 +6,6 @@ const request = axios.create({
   headers: {
     get: {
       'Content-Type': 'application/json',
-      'x-rapidapi-key': config.X_RAPIDAPI_KEY,
-      'x-rapidapi-HOST': config.X_RAPIDAPI_HOST,
     },
     post: {
       'Content-Type': 'application/json',

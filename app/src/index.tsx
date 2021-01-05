@@ -11,11 +11,9 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import Header from './Components/Header';
 import colors from './Globals/colors';
-import Main from './Main';
+import Main from './Pages/Main';
 
-const Root: React.FC<{
-  country?: string;
-}> = ({ country }) => {
+const Root: React.FC<{}> = () => {
   useEffect(() => {
     const registerNotif = async () => {
       const { status: existingStatus } = await getAsync(NOTIFICATIONS);
@@ -54,7 +52,7 @@ const Root: React.FC<{
               sound: true,
             },
             trigger: {
-              hour: 19,
+              hour: 20,
               minute: 0,
               repeats: true,
             },
@@ -79,7 +77,7 @@ const Root: React.FC<{
     >
       <StatusBar animated barStyle="light-content" />
       <Header />
-      <Main defaultCountry={country} />
+      <Main />
     </SafeAreaView>
   );
 };

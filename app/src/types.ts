@@ -1,36 +1,22 @@
 export type numberOrNull = number | null;
 export type stringOrNull = string | null;
-export type StatisticResponse = {
-  continent: string;
-  country: string;
-  population: number;
-  cases: {
-    new: stringOrNull;
-    active: numberOrNull;
-    critical: numberOrNull;
-    recovered: numberOrNull;
-    '1M_pop': stringOrNull;
-    total: numberOrNull;
-  };
-  deaths: {
-    new: stringOrNull;
-    '1M_pop': stringOrNull;
-    total: numberOrNull;
-  };
-  tests: {
-    '1M_pop': stringOrNull;
-    total: numberOrNull;
-  };
-  day: string;
-  time: string;
-};
-
-export type CountriesResponse = string;
-
-export type ResponseModel<T> = {
-  get: 'statistics' | 'countries' | 'history';
-  parameters: { [x: string]: any };
-  errors: Array<any>;
-  results: number;
-  response: T[];
+export type ReportModel = {
+  date: string;
+  adultIntensiveCareRatio: string;
+  fillationRatio: string;
+  pneumoniaPercent: string;
+  ventilatorOccupancyRatio: string;
+  bedOccupancyRate: string;
+  totalTests: string;
+  totalPatients: string;
+  totalDeaths: string;
+  totalIntensiveCare: string;
+  totalIntubated: string;
+  totalRecovered: string;
+  tests: string;
+  cases: string;
+  patients: string;
+  critical: string;
+  deaths: string;
+  recovered: string;
 };

@@ -1,13 +1,12 @@
 import ViewPager from '@react-native-community/viewpager';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CountryPicker from './Components/CountryPicker';
-import DatePicker from './Components/DatePicker';
-import MyDonut from './Components/MyDonut';
-import Table from './Components/Table';
-import colors from './Globals/colors';
-import { formatDate, storeDataToStorage } from './utils';
-import { useHistory } from './utils/data';
+import DatePicker from '../Components/DatePicker';
+import MyDonut from '../Components/MyDonut';
+import Table from '../Components/Table';
+import colors from '../Globals/colors';
+import { formatDate } from '../utils';
+import { useLastReport, useReport } from '../utils/data';
 
 const styles = StyleSheet.create({
   pickerGroup: {
@@ -35,9 +34,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginRight: 6,
   },
+  lastUpdateTitle: {
+    color: colors.yellow,
+    fontSize: 14,
+  },
   tableDateText: {
     color: colors.textColorWhite,
     fontSize: 24,
+  },
+  lastUpdateText: {
+    color: colors.textColorWhite,
+    fontSize: 14,
+    textAlign: 'right',
   },
   countryText: {
     color: colors.textColorWhite,
@@ -65,46 +73,24 @@ const styles = StyleSheet.create({
 });
 
 const initialPage = 0;
-const Main: React.FC<{
-  defaultCountry?: string;
-}> = ({ defaultCountry }) => {
+const Main: React.FC<{}> = () => {
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
-  const [selectedCountry, setSelectedCountry] = useState<string>('Turkey');
-  const [countryPickerModalVisible, setCountryPickerModalvisible] = useState<boolean>(false);
   const [datePickerModalVisible, setDatePickerModalvisible] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { data: historyData, mutate: mutateHistory, isValidating: historyLoading } = useHistory(
-    selectedCountry,
-    formatDate(selectedDate),
-  );
-  const {
-    data: historyPevData,
-    mutate: mutatePrevHistory,
-    isValidating: prevHistoryLoading,
-  } = useHistory(selectedCountry, formatDate(new Date(selectedDate.getTime() - 86400000)));
+  const { data, mutate, isValidating } = useReport(formatDate(selectedDate));
+  const { data: lastData } = useLastReport();
+  const chartKeys = [0, 1, 2, 3, 4];
 
-  useEffect(() => {
-    if (defaultCountry) {
-      setSelectedCountry(defaultCountry);
-    }
-  }, [defaultCountry]);
+  // TODO solve date problem
 
-  const population = historyData?.population;
-  const activeCase = historyData?.cases.active;
-  const totalCase = historyData?.cases.total;
-  const totalDeaths = historyData?.deaths.total;
-  const totalRecovered = historyData?.cases.recovered;
-
-  const keys = ['0', '1', '2'];
   return (
     <>
       <ScrollView
         refreshControl={
           <RefreshControl
-            refreshing={prevHistoryLoading || historyLoading}
+            refreshing={isValidating}
             onRefresh={() => {
-              mutateHistory();
-              mutatePrevHistory();
+              mutate();
             }}
             tintColor={colors.textColorWhite}
           />
@@ -118,33 +104,44 @@ const Main: React.FC<{
           >
             <View key="0">
               <View style={{ alignItems: 'center' }}>
-                <MyDonut percentage={activeCase} max={population} />
-                <Text style={styles.chartBottomTextInfo}>({activeCase})</Text>
-                <Text style={styles.chartBottomText}>Aktif Vaka-Nüfus Oranı</Text>
+                <MyDonut percentage={Number(data?.pneumoniaPercent)} />
+                <Text style={styles.chartBottomText}>Hastalarda Zatürre Oranı</Text>
               </View>
             </View>
             <View key="1">
               <View style={{ alignItems: 'center' }}>
-                <MyDonut percentage={totalRecovered} max={totalCase} />
-                <Text style={styles.chartBottomText}>Toplam İyileşen-Vaka Oranı</Text>
+                <MyDonut percentage={Number(data?.bedOccupancyRate)} />
+                <Text style={styles.chartBottomText}>Yatak Doluluk Oranı</Text>
               </View>
             </View>
             <View key="2">
               <View style={{ alignItems: 'center' }}>
-                <MyDonut percentage={totalDeaths} max={totalCase} />
-                <Text style={styles.chartBottomText}>Toplam Vefat-Vaka Oranı</Text>
+                <MyDonut percentage={Number(data?.adultIntensiveCareRatio)} />
+                <Text style={styles.chartBottomText}>Erişkin Yoğun Bakım Doluluk Oranı</Text>
+              </View>
+            </View>
+            <View key="3">
+              <View style={{ alignItems: 'center' }}>
+                <MyDonut percentage={Number(data?.ventilatorOccupancyRatio)} />
+                <Text style={styles.chartBottomText}>Ventilatör Doluluk Oranı</Text>
+              </View>
+            </View>
+            <View key="4">
+              <View style={{ alignItems: 'center' }}>
+                <MyDonut percentage={Number(data?.fillationRatio)} />
+                <Text style={styles.chartBottomText}>filyasyon Oranı</Text>
               </View>
             </View>
           </ViewPager>
           <View style={styles.pagination}>
-            {keys.map((key, idx) => (
+            {chartKeys.map((key, idx) => (
               <View
                 key={key}
                 style={[
                   styles.dot,
                   {
                     backgroundColor: currentPage === idx ? colors.yellow : colors.darkGray,
-                    marginRight: idx === keys.length - 1 ? 0 : 6,
+                    marginRight: idx === chartKeys.length - 1 ? 0 : 6,
                   },
                 ]}
               />
@@ -156,34 +153,19 @@ const Main: React.FC<{
             <Text style={styles.tableDateTitle}>Tarih</Text>
             <TouchableOpacity onPress={() => setDatePickerModalvisible(true)}>
               <Text style={styles.tableDateText}>
-                {selectedDate.toLocaleDateString()?.replace(/\//g, '.')}
+                {formatDate(selectedDate).replace(/\//g, '.')}
               </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={[styles.countryBtn, styles.tableOptGroup]}
-            onPress={() => setCountryPickerModalvisible(true)}
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={1}
-              style={[styles.tableDateText, styles.countryText]}
-            >
-              {selectedCountry}
-            </Text>
-          </TouchableOpacity>
+          <View style={[styles.dateBtn, styles.tableOptGroup, { flexDirection: 'column' }]}>
+            <Text style={styles.lastUpdateTitle}>Son Güncelleme</Text>
+            <TouchableOpacity onPress={() => setDatePickerModalvisible(true)}>
+              <Text style={styles.lastUpdateText}>{lastData?.date.replace(/\//g, '.')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <Table prevData={historyPevData} data={historyData} />
+        <Table loading={isValidating} data={data} />
       </ScrollView>
-      <CountryPicker
-        visible={countryPickerModalVisible}
-        onClose={() => setCountryPickerModalvisible(false)}
-        value={selectedCountry}
-        onChange={val => {
-          setSelectedCountry(val);
-          storeDataToStorage('country', val);
-        }}
-      />
       <DatePicker
         visible={datePickerModalVisible}
         onClose={() => setDatePickerModalvisible(false)}

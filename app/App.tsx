@@ -21,7 +21,13 @@ globalAny.FormData = globalAny.originalFormData ? globalAny.originalFormData : g
 
 export default function App() {
   const [loadingComplete, setLoadingComplete] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (loadingComplete) {
+      setModalVisible(true);
+    }
+  }, [loadingComplete]);
 
   useEffect(() => {
     const checkForOTAUpdates = async () => {
@@ -45,11 +51,6 @@ export default function App() {
     async function loadResourcesAndDataAsync() {
       try {
         await SplashScreen.preventAutoHideAsync().catch(() => {});
-
-        const country = await AsyncStorage.getItem('country');
-        if (country) {
-          setSelectedCountry(JSON.parse(country));
-        }
       } finally {
         setLoadingComplete(true);
         await SplashScreen.hideAsync().catch(() => {});
@@ -77,8 +78,13 @@ export default function App() {
       }}
     >
       <StatusBar animated barStyle="light-content" />
-      <Root country={selectedCountry} />
-      <WelcomeModal visible={loadingComplete && !selectedCountry} onChange={setSelectedCountry} />
+      <Root />
+      <WelcomeModal
+        onClose={() => {
+          setModalVisible(false);
+        }}
+        visible={modalVisible}
+      />
     </SWRConfig>
   );
 }

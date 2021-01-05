@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import colors from '../Globals/colors';
-import { StatisticResponse } from '../types';
+import { ReportModel } from '../types';
 import Cell from './Cell';
 
 const styles = StyleSheet.create({
@@ -31,11 +31,10 @@ const styles = StyleSheet.create({
 });
 
 const Table: React.FC<{
-  prevData?: StatisticResponse;
-  data?: StatisticResponse;
+  data?: ReportModel | null;
   loading?: boolean;
-}> = ({ prevData, data, loading }) => {
-  if (loading) {
+}> = ({ data, loading }) => {
+  if (!data || loading) {
     return (
       <View style={[styles.tableContainer, { paddingTop: 24 }]}>
         <ActivityIndicator color={colors.textColorWhite} size="large" />
@@ -43,20 +42,6 @@ const Table: React.FC<{
     );
   }
 
-  const todayTest = data && prevData ? data.tests.total - prevData?.tests.total : '-';
-  const todayRecovered = data && prevData ? data.cases.recovered - prevData?.cases.recovered : '-';
-  const todayCase =
-    data && prevData
-      ? data.cases.new
-        ? data.cases.new.replace('+', '')
-        : data.cases.total - prevData?.cases.total
-      : '-';
-  const todayDeath =
-    data && prevData
-      ? data.deaths.new
-        ? data.deaths.new.replace('+', '')
-        : data.deaths.total - prevData?.deaths.total
-      : '-';
   return (
     <View style={styles.tableContainer}>
       <View style={styles.tableWrapper}>
@@ -72,41 +57,51 @@ const Table: React.FC<{
               <Cell
                 left={{
                   title: 'Test Sayısı',
-                  content: todayTest,
+                  content: data.tests,
                 }}
                 right={{
                   title: 'Test Sayısı',
-                  content: data?.tests.total || '-',
+                  content: data.totalTests,
                 }}
               />
               <Cell
                 left={{
                   title: 'Vaka',
-                  content: todayCase,
+                  content: data.cases,
                 }}
                 right={{
                   title: 'Vaka',
-                  content: data?.cases.total || '-',
+                  content: data.totalPatients, // typo by saglik bakanligi
+                }}
+              />
+              <Cell
+                left={{
+                  title: 'Hasta',
+                  content: data.patients,
+                }}
+                right={{
+                  title: 'Ağır Hasta',
+                  content: data.critical,
                 }}
               />
               <Cell
                 left={{
                   title: 'Vefat',
-                  content: todayDeath,
+                  content: data.deaths,
                 }}
                 right={{
                   title: 'Vefat',
-                  content: data?.deaths.total || '-',
+                  content: data.totalDeaths,
                 }}
               />
               <Cell
                 left={{
                   title: 'İyileşen',
-                  content: todayRecovered,
+                  content: data.recovered,
                 }}
                 right={{
                   title: 'İyileşen',
-                  content: data?.cases.recovered || '-',
+                  content: data.totalRecovered,
                 }}
               />
             </View>

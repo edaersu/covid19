@@ -1,0 +1,15 @@
+/.git
+package.json
+lerna.json
+.history
+package-lock.json
+yarn.lock
+yarn-error.log
+**/node_modules/**
+**/build/**
+**/dist/**
+**/dist_live/**
+**/lib/**
+**/public/**
+**/tmp/**
+**/.eslintrc.js
