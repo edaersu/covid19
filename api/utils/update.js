@@ -26,8 +26,8 @@ const update = async () => {
     const timeline = JSON.parse(fs.readFileSync("dataset/timeline.json"));
     const DOT_REGEX = /./gi;
     const COMMA_REGEX = /,/gi;
-    let dayData = {
-      date: date,
+    const dayData = {
+      date,
       adultIntensiveCareRatio: data.eriskin_yogun_bakim_doluluk_orani.replace(
         COMMA_REGEX,
         "."

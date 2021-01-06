@@ -40,22 +40,19 @@ const normalizePort = (val) => {
 const port = normalizePort(process.env.PORT || 3001);
 const server = http.createServer(app);
 
-const updateInterval = setInterval(() => {
-  runScript("./utils/update.js", function (err) {
-    if (err) throw err;
-    console.log("update done!");
-  });
-}, [9e5]);
-
 server.listen(port, () => {
   console.log(`API listening on port: ${port}`);
+  setInterval(() => {
+    runScript("./utils/update.js", (err) => {
+      if (err) throw err;
+      console.log("update done!");
+    });
+  }, [5e3]);
 });
 
 // graceful shutdown
 process.on("SIGINT", () => {
-  server.close((_err1) => {
-    clearInterval(updateInterval);
-  });
+  server.close((_err1) => {});
 });
 
 module.exports = app;

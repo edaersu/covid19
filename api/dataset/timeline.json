@@ -5738,5 +5738,25 @@
         "critical": "3.522",
         "deaths": "197",
         "recovered": "9.896"
+    },
+    "06/01/2021": {
+        "date": "06/01/2021",
+        "adultIntensiveCareRatio": "61.7",
+        "fillationRatio": "99.9",
+        "pneumoniaPercent": "4.3",
+        "ventilatorOccupancyRatio": "32.4",
+        "bedOccupancyRate": "44.2",
+        "totalTests": "25.498.210",
+        "totalPatients": "2.283.931",
+        "totalDeaths": "22.070",
+        "totalIntensiveCare": "",
+        "totalIntubated": "",
+        "totalRecovered": "2.164.040",
+        "tests": "182.645",
+        "cases": "13.830",
+        "patients": "1.458",
+        "critical": "3.303",
+        "deaths": "191",
+        "recovered": "8.702"
     }
 }
